@@ -20,11 +20,10 @@ public class SpiderJob extends BaseJob{
 
     @SneakyThrows
     @Override
-    public Boolean actuallyExecute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        System.out.println("execute");
-        // ShellCaller.call(new String[]{"D:\\Program Files\\AnacondaInstall\\python", pythonShellPath});
+    public Boolean actuallyExecute(JobExecutionContext jobExecutionContext) {
+        System.out.println("execute...");
+        ShellCaller.call(new String[]{"D:\\Program Files\\AnacondaInstall\\python", pythonShellPath});
         return true;
     }
 }
-
 
