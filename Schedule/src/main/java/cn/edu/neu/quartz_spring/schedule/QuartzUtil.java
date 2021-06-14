@@ -21,7 +21,7 @@ public class QuartzUtil {
     private SchedulerFactoryBean factory;
 
     /**
-     * 创建新的定时任务，不带使用 dataMap
+     * 创建新的定时任务，不使用 dataMap，但使用 CronTrigger
      *
      * @param jobName jobName
      * @param jobGroup jobGroup
@@ -31,12 +31,12 @@ public class QuartzUtil {
      * @param jobClass jobClass
      * @throws SchedulerException SchedulerException
      */
-    public void newJob(String jobName, String jobGroup, String triggerName, String triggerGroup, String cron, Class<? extends BaseJob> jobClass) throws SchedulerException {
-        newJob(jobName, jobGroup, triggerName, triggerGroup, cron, null, jobClass);
+    public void newJobCron(String jobName, String jobGroup, String triggerName, String triggerGroup, String cron, Class<? extends BaseJob> jobClass) throws SchedulerException {
+        newJobCron(jobName, jobGroup, triggerName, triggerGroup, cron, null, jobClass);
     }
 
     /**
-     * 创建新的定时任务，使用 dataMap
+     * 创建新的定时任务，使用 dataMap & CronTrigger
      *
      * @param jobName jobName
      * @param jobGroup jobGroup
@@ -47,7 +47,7 @@ public class QuartzUtil {
      * @param jobClass jobClass
      * @throws SchedulerException SchedulerException
      */
-    public void newJob(String jobName, String jobGroup, String triggerName, String triggerGroup, String cron, Map<String, Object> dataMap, Class<? extends BaseJob> jobClass) throws SchedulerException {
+    public void newJobCron(String jobName, String jobGroup, String triggerName, String triggerGroup, String cron, Map<String, Object> dataMap, Class<? extends BaseJob> jobClass) throws SchedulerException {
         Scheduler scheduler = factory.getScheduler();
         JobDetail jobDetail = JobBuilder.newJob(jobClass)
                 .withIdentity(jobName, jobGroup)
@@ -57,7 +57,45 @@ public class QuartzUtil {
         }
         CronTrigger trigger = newCronTrigger(triggerName, triggerGroup, cron);
         scheduler.scheduleJob(jobDetail, trigger);
-        System.out.println("xxxxxx");
+    }
+
+    /**
+     * 创建新的定时任务，不使用 dataMap，但使用SimpleTrigger
+     *
+     * @param jobName jobName
+     * @param jobGroup jobGroup
+     * @param triggerName triggerName
+     * @param triggerGroup triggerGroup
+     * @param interval interval
+     * @param jobClass jobClass
+     * @throws SchedulerException SchedulerException
+     */
+    public void newJobSimple(String jobName, String jobGroup, String triggerName, String triggerGroup, String interval, Class<? extends BaseJob> jobClass) throws SchedulerException {
+        newJobSimple(jobName, jobGroup, triggerName, triggerGroup, interval, null, jobClass);
+    }
+
+    /**
+     * 创建新的定时任务，使用 dataMap & SimpleTrigger
+     *
+     * @param jobName jobName
+     * @param jobGroup jobGroup
+     * @param triggerName triggerName
+     * @param triggerGroup triggerGroup
+     * @param interval interval
+     * @param dataMap dataMap
+     * @param jobClass jobClass
+     * @throws SchedulerException SchedulerException
+     */
+    public void newJobSimple(String jobName, String jobGroup, String triggerName, String triggerGroup, String interval, Map<String, Object> dataMap, Class<? extends BaseJob> jobClass) throws SchedulerException {
+        Scheduler scheduler = factory.getScheduler();
+        JobDetail jobDetail = JobBuilder.newJob(jobClass)
+                .withIdentity(jobName, jobGroup)
+                .build();
+        if (dataMap != null) {
+            jobDetail.getJobDataMap().putAll(dataMap);
+        }
+        SimpleTrigger trigger = newSimpleTrigger(triggerName, triggerGroup, interval);
+        scheduler.scheduleJob(jobDetail, trigger);
     }
 
     /**
@@ -248,7 +286,17 @@ public class QuartzUtil {
     private CronTrigger newCronTrigger(String triggerName, String triggerGroup, String cron) {
         return TriggerBuilder.newTrigger()
                 .withIdentity(triggerName, triggerGroup)
+                .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                 .build();
     }
+
+    private SimpleTrigger newSimpleTrigger(String triggerName, String triggerGroup, String interval){
+        return TriggerBuilder.newTrigger()
+                .withIdentity(triggerName, triggerGroup)
+                .startNow()
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(Integer.parseInt(interval)))
+                .build();
+    }
 }
+

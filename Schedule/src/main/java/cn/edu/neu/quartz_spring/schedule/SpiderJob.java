@@ -12,19 +12,17 @@ import java.util.Date;
  * @author 32098
  */
 public class SpiderJob extends BaseJob{
-//    String pythonShellPath;
-//
-//    public void setPythonShellPath(String pythonShellPath) {
-//        this.pythonShellPath = pythonShellPath;
-//    }
+    String pythonShellPath;
+
+    public void setPythonShellPath(String pythonShellPath) {
+        this.pythonShellPath = pythonShellPath;
+    }
 
     @SneakyThrows
     @Override
     public Boolean actuallyExecute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        System.out.println("xyz");
-        System.out.println(jobExecutionContext.getJobDetail().getJobDataMap().get("pythonShellPath"));
-        // System.out.println("---"+ pythonShellPath);
-        ShellCaller.call(new String[]{"D:\\Program Files\\AnacondaInstall\\python", "D:\\Code\\Python\\SpiderModule\\weibo_main.py"});
+        System.out.println("execute");
+        // ShellCaller.call(new String[]{"D:\\Program Files\\AnacondaInstall\\python", pythonShellPath});
         return true;
     }
 }

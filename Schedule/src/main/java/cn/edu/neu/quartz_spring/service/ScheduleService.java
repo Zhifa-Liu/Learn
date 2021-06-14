@@ -23,22 +23,30 @@ public class ScheduleService {
 
     public Boolean newTimePrintJob(String name, String cron) {
         try {
-            quartzUtil.newJob(name, JOB_GROUP, name, TRIGGER_GROUP, cron, PrintTimeJob.class);
+            quartzUtil.newJobCron(name, JOB_GROUP, name, TRIGGER_GROUP, cron, PrintTimeJob.class);
             return true;
         } catch (SchedulerException e) {
             return false;
         }
     }
 
-    public Boolean newSpiderJob(String cron) {
+    public Boolean newSpiderJob(String cron, String interval) {
         try {
             Map<String, Object> shellPathToutiao = new HashMap<>(1);
             shellPathToutiao.put("pythonShellPath", "D:\\Code\\Python\\SpiderModule\\toutiao_main.py");
-            quartzUtil.newJob("toutiao_spider_job", JOB_GROUP, "toutiao_spider_trigger", TRIGGER_GROUP, cron, shellPathToutiao, SpiderJob.class);
             Map<String, Object> shellPathWeibo = new HashMap<>(1);
-            shellPathToutiao.put("pythonShellPath", "D:\\Code\\Python\\SpiderModule\\weibo_main.py");
-            quartzUtil.newJob("weibo_spider_job", JOB_GROUP, "weibo_spider_trigger", TRIGGER_GROUP, cron, shellPathWeibo, SpiderJob.class);
-            return true;
+            shellPathWeibo.put("pythonShellPath", "D:\\Code\\Python\\SpiderModule\\weibo_main.py");
+            if(cron == null || "" .equals(cron)){
+                quartzUtil.newJobCron("toutiao_spider_job", JOB_GROUP, "toutiao_spider_trigger", TRIGGER_GROUP, cron, shellPathToutiao, SpiderJob.class);
+                quartzUtil.newJobCron("weibo_spider_job", JOB_GROUP, "weibo_spider_trigger", TRIGGER_GROUP, cron, shellPathWeibo, SpiderJob.class);
+                return true;
+            }else if (interval == null || "".equals(interval)) {
+                quartzUtil.newJobSimple("toutiao_spider_job", JOB_GROUP, "toutiao_spider_trigger", TRIGGER_GROUP, interval, shellPathToutiao, SpiderJob.class);
+                quartzUtil.newJobSimple("weibo_spider_job", JOB_GROUP, "weibo_spider_trigger", TRIGGER_GROUP, interval, shellPathWeibo, SpiderJob.class);
+                return true;
+            }else {
+                return false;
+            }
         } catch (SchedulerException e) {
             e.printStackTrace();
             return false;
