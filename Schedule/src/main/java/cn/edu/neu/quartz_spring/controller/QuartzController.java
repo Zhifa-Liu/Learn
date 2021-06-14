@@ -25,8 +25,8 @@ public class QuartzController {
     }
 
     @GetMapping("job/newSpiderJob")
-    public GenericResponse<Boolean> newSpiderJob(@RequestParam("cron") String cron, @RequestParam("interval") String interval) {
-        Boolean data = scheduleService.newSpiderJob(cron, interval);
+    public GenericResponse<Boolean> newSpiderJob(@RequestParam("interval") String interval) {
+        Boolean data = scheduleService.newSpiderJob(interval);
         return new GenericResponse<Boolean>().setResult("success").setCode(ResponseCode.SUCCESS.getCode()).setData(data);
     }
 

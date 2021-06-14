@@ -30,23 +30,15 @@ public class ScheduleService {
         }
     }
 
-    public Boolean newSpiderJob(String cron, String interval) {
+    public Boolean newSpiderJob(String interval) {
         try {
             Map<String, Object> shellPathToutiao = new HashMap<>(1);
             shellPathToutiao.put("pythonShellPath", "D:\\Code\\Python\\SpiderModule\\toutiao_main.py");
             Map<String, Object> shellPathWeibo = new HashMap<>(1);
             shellPathWeibo.put("pythonShellPath", "D:\\Code\\Python\\SpiderModule\\weibo_main.py");
-            if(cron == null || "" .equals(cron)){
-                quartzUtil.newJobCron("toutiao_spider_job", JOB_GROUP, "toutiao_spider_trigger", TRIGGER_GROUP, cron, shellPathToutiao, SpiderJob.class);
-                quartzUtil.newJobCron("weibo_spider_job", JOB_GROUP, "weibo_spider_trigger", TRIGGER_GROUP, cron, shellPathWeibo, SpiderJob.class);
-                return true;
-            }else if (interval == null || "".equals(interval)) {
-                quartzUtil.newJobSimple("toutiao_spider_job", JOB_GROUP, "toutiao_spider_trigger", TRIGGER_GROUP, interval, shellPathToutiao, SpiderJob.class);
-                quartzUtil.newJobSimple("weibo_spider_job", JOB_GROUP, "weibo_spider_trigger", TRIGGER_GROUP, interval, shellPathWeibo, SpiderJob.class);
-                return true;
-            }else {
-                return false;
-            }
+            quartzUtil.newJobSimple("toutiao_spider_job", JOB_GROUP, "toutiao_spider_trigger", TRIGGER_GROUP, interval, shellPathToutiao, SpiderJob.class);
+            quartzUtil.newJobSimple("weibo_spider_job", JOB_GROUP, "weibo_spider_trigger", TRIGGER_GROUP, interval, shellPathWeibo, SpiderJob.class);
+            return true;
         } catch (SchedulerException e) {
             e.printStackTrace();
             return false;
