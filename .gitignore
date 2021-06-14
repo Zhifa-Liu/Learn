@@ -1,0 +1,5 @@
+# Project exclude paths
+/ElasticSearchLearn/target/
+/Redis/target/
+/Schedule/target/
+/SpringES/target/
